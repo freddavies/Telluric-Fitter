@@ -33,10 +33,15 @@ If you have a relatively modern version of gfortran, you may run into some compi
 
 WARNING: Any changes you make to the makefiles will be overwritten if you simply run `python setup.py install` again. Comment out line 210 in `setup.py` to bypass re-un-packing the tar files,
 
+.. code:: bash
+
     #subprocess.check_call(["tar", "-xzf", '{}{}'.format(TELLURICMODELING, fname), '-C', TELLURICMODELING])
 
 
 Here are examples for modifying the makefiles. For my system, in the file `~/.TelFit/lblrtm/build/makefile.common`, the relevant block is:
+
+
+.. code:: bash
 
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
@@ -47,6 +52,8 @@ Here are examples for modifying the makefiles. For my system, in the file `~/.Te
 
 To fix it, I add the `std=legacy` flag to FCFLAG, like so:
 
+.. code:: bash
+
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
 	PLTFRM=OS_X \
@@ -55,6 +62,8 @@ To fix it, I add the `std=legacy` flag to FCFLAG, like so:
 	UTIL_FILE=util_gfortran.f90
 
 The same flag must be added to FCFLAG in the file `~/.TelFit/lnfl/build/makefile.common`:
+
+.. code:: bash
 
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
