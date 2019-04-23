@@ -32,13 +32,11 @@ to install TelFit. It may take a while, as it needs to build the LBLRTM code and
 If you have a relatively modern version of gfortran, you may run into some compilation errors. Fortunately, there is a way out. The TelFit installation will place the LBLRTM and LNFL codes in the directory `~/.TelFit/` and attempt to compile them there. The compilation statement for whatever system you are running needs to be modified to include the `-std=legacy` flag.
 
 WARNING: Any changes you make to the makefiles will be overwritten if you simply run `python setup.py install` again. Comment out line 210 in `setup.py` to bypass re-un-packing the tar files,
-.. code::
+
     #subprocess.check_call(["tar", "-xzf", '{}{}'.format(TELLURICMODELING, fname), '-C', TELLURICMODELING])
 
 
 Here are examples for modifying the makefiles. For my system, in the file `~/.TelFit/lblrtm/build/makefile.common`, the relevant block is:
-
-.. code:: 
 
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
@@ -49,8 +47,6 @@ Here are examples for modifying the makefiles. For my system, in the file `~/.Te
 
 To fix it, I add the `std=legacy` flag to FCFLAG, like so:
 
-.. code::
-
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
 	PLTFRM=OS_X \
@@ -59,8 +55,6 @@ To fix it, I add the `std=legacy` flag to FCFLAG, like so:
 	UTIL_FILE=util_gfortran.f90
 
 The same flag must be added to FCFLAG in the file `~/.TelFit/lnfl/build/makefile.common`:
-
-..code::
 
     osxGNUsgl:
 	${MAKE} -f ${MAKEFILE} all P_TYPE=sgl FC_TYPE=gnu \
