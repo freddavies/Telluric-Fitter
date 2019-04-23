@@ -653,34 +653,44 @@ class TelluricFitter:
 
         #Extract parameters from pars and const_pars. They will have variable
         #  names set from self.parnames
+        
         fit_idx = 0
-        for i in range(len(self.parnames)):
-            #Assign to local variables by the parameter name
-            exec ("%s = %g" % (self.parnames[i], self.const_pars[i]))
+        # NO LONGER WORKS IN PYTHON 3 (FBD)
+#        for i in range(len(self.parnames)):
+#            #Assign to local variables by the parameter name
+#            exec("%s = %g" % (self.parnames[i], self.const_pars[i]))
 
-
-        wavenum_start = 1e7 / waveend
-        wavenum_end = 1e7 / wavestart
+        wavenum_start = 1e7 / self.GetValue("waveend")
+        wavenum_end = 1e7 / self.GetValue("wavestart")
         lat = self.observatory["latitude"]
         alt = self.observatory["altitude"]
 
-
         #Generate the model:
         if model is None:
-            model = self.Modeler.MakeModel(pressure, temperature, wavenum_start, wavenum_end, angle, h2o, co2, o3, n2o, co,
-                                           ch4, o2, no, so2, no2, nh3, hno3, lat=lat, alt=alt, wavegrid=None,
+            model = self.Modeler.MakeModel(self.GetValue("pressure"), self.GetValue("temperature"),
+                                           wavenum_start, wavenum_end,
+                                           self.GetValue("angle"), self.GetValue("h2o"), self.GetValue("co2"),
+                                           self.GetValue("o3"), self.GetValue("n2o"), self.GetValue("co"),
+                                           self.GetValue("ch4"), self.GetValue("o2"), self.GetValue("no"), self.GetValue("so2"),
+                                           self.GetValue("no2"), self.GetValue("nh3"), self.GetValue("hno3"),
+                                           lat=lat, alt=alt, wavegrid=None,
                                            resolution=None, vac2air=self.air_wave)
 
             #Save each model if debugging
-            if self.debug and self.debug_level >= 5:
-                FittingUtilities.ensure_dir("Models/")
-                model_name = "Models/transmission" + "-%.2f" % pressure + "-%.2f" % temperature + "-%.1f" % h2o + "-%.1f" % angle + "-%.2f" % (
-                co2) + "-%.2f" % (o3 * 100) + "-%.2f" % ch4 + "-%.2f" % (co * 10)
-                np.savetxt(model_name, np.transpose((model.x, model.y)), fmt="%.8f")
+#            if self.debug and self.debug_level >= 5:
+#                FittingUtilities.ensure_dir("Models/")
+#                model_name = "Models/transmission" + "-%.2f" % (self.GetValue("pressure")) +
+#                    "-%.2f" % (self.GetValue("temperature")) + "-%.1f" % (self.GetValue("h2o")) +
+#                        "-%.1f" % (self.GetValue("angle")) + "-%.2f" % (
+#                self.GetValue("co2")) + "-%.2f" % (self.GetValue("o3") * 100) +
+#                            "-%.2f" % self.GetValue("ch4") + "-%.2f" % (self.GetValue("co") * 10)
+#                np.savetxt(model_name, np.transpose((model.x, model.y)), fmt="%.8f")
 
             #Interpolate to constant wavelength spacing
-            xgrid = np.linspace(model.x[0], model.x[-1], model.x.size)
-            model = FittingUtilities.RebinData(model, xgrid)
+            #xgrid = np.linspace(model.x[0], model.x[-1], model.x.size)
+            #model = FittingUtilities.RebinData(model, xgrid)
+
+            resolution = self.GetValue("resolution")
 
             #Use nofit if you want a model with reduced resolution. Probably easier
             #  to go through MakeModel directly though...
@@ -733,13 +743,10 @@ class TelluricFitter:
             primary_star = self.source_fcn(primary_star, *self.source_args, **self.source_kwargs)
             data.cont *= primary_star.y
 
-
-
         if self.debug and self.debug_level >= 4:
             logging.debug("Saving data and model arrays right before fitting the wavelength")
             logging.debug("  and resolution to Debug_Output1.log")
             np.savetxt("Debug_Output1.log", np.transpose((data.x, data.y, data.cont, model.x, model.y)))
-
 
         #Fine-tune the wavelength calibration by fitting the location of several telluric lines
         modelfcn, mean = self.FitWavelengthNew(data, model.copy(), fitorder=self.wavelength_fit_order)
