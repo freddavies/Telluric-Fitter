@@ -9,7 +9,7 @@ please cite `my paper`_.
 Installation
 ------------
 
-This code originally only ran on python 2, but is now being reworked for python 3. It requires the following packages:
+This code originally only ran on python 2, but should now ostensibly run on python 3. It requires the following packages:
 
   - matplotlib
   - **numpy v1.6 or greater**
@@ -21,13 +21,16 @@ This code originally only ran on python 2, but is now being reworked for python 
   - **cython**
   - **requests**
 
-The bolded entries are required *before* installation, so make sure you get them from pip, apt-get/yum, or conda (depending on your OS and python distribution). The setup script will attempt to install the rest if you don't have them, but I suggest doing it yourself just to make sure nothing goes wrong. Once you have the dependencies, simply type
+The bolded entries are required *before* installation, so make sure you get them from pip, apt-get/yum, or conda (depending on your OS and python distribution). The setup script will attempt to install the rest if you don't have them, but I suggest doing it yourself just to make sure nothing goes wrong. Once you have the dependencies, cd to the Telluric-Fitter-py3 directory, and simply type
 
 .. code:: bash
 
     python setup.py install
 
 to install TelFit. It may take a while, as it needs to build the LBLRTM code and some of its standard input files.
+
+If there are Fortran compile errors
+------------
 
 If you have a relatively modern version of gfortran, you may run into some compilation errors. Fortunately, there is a way out. The TelFit installation will place the LBLRTM and LNFL codes in the directory `~/.TelFit/` and attempt to compile them there. The compilation statement for whatever system you are running needs to be modified to include the `-std=legacy` flag.
 
