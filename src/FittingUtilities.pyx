@@ -383,8 +383,8 @@ def ReduceResolution(data,resolution, extend=True):
   #Extend the xy axes to avoid edge-effects, if desired
   if extend:
     
-    before = data.y[-gaussian.size/2+1:]
-    after = data.y[:gaussian.size/2]
+    before = data.y[-gaussian.size//2+1:]
+    after = data.y[:gaussian.size//2]
     extended = np.r_[before, data.y, after]
 
     first = data.x[0] - float(int(gaussian.size/2.0+0.5))*xspacing
