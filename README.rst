@@ -9,7 +9,9 @@ please cite `my paper`_.
 Installation
 ------------
 
-This code originally only ran on python 2, but should now ostensibly run on python 3. It requires the following packages:
+This code originally only ran on python 2, but should now ostensibly run on python 3. 
+
+The following packages are required (version numbers are a carryover from the python 2 version):
 
   - matplotlib
   - **numpy v1.6 or greater**
@@ -34,17 +36,15 @@ to install TelFit. It may take a while, as it needs to build the LBLRTM code and
 If there are Fortran compile errors
 ------------
 
-If you have a relatively modern version of gfortran, you may run into some compilation errors. Fortunately, there is a way out. The TelFit installation will place the LBLRTM and LNFL codes in the directory `~/.TelFit/` and attempt to compile them there. The compilation statement for whatever system you are running needs to be modified to include the `-std=legacy` flag.
+If you are running gfortran version 8 or higher, you will very likely run into some errors when LBLRTM compiles. Fortunately, there is a way out. The TelFit installation places the LBLRTM and LNFL codes in the directory `~/.TelFit/` and attempts to compile them there. The compilation statement for whatever system you are running needs to be modified to include the `-std=legacy` flag, and then run python setup.py install once more to finish the installation.
 
-WARNING: Any changes you make to the makefiles will be overwritten if you simply run `python setup.py install` again. Comment out line 210 in `setup.py` to bypass re-un-packing the tar files,
+**WARNING**: Any changes you make to the makefiles, as described below, will be overwritten if you simply run `python setup.py install` again. Comment out line 210 in `setup.py` to bypass re-un-packing the tar files,
 
 .. code:: bash
 
     #subprocess.check_call(["tar", "-xzf", '{}{}'.format(TELLURICMODELING, fname), '-C', TELLURICMODELING])
 
-
 Here are examples for modifying the makefiles. For my system, in the file `~/.TelFit/lblrtm/build/makefile.common`, the relevant block is:
-
 
 .. code:: bash
 
@@ -66,7 +66,7 @@ To fix it, I add the `std=legacy` flag to FCFLAG, like so:
 	FCFLAG="-frecord-marker=4 -std=legacy" \
 	UTIL_FILE=util_gfortran.f90
 
-The same flag must be added to FCFLAG in the file `~/.TelFit/lnfl/build/makefile.common`:
+The same flag must also be added to FCFLAG in the file `~/.TelFit/lnfl/build/makefile.common`:
 
 .. code:: bash
 
@@ -77,6 +77,9 @@ The same flag must be added to FCFLAG in the file `~/.TelFit/lnfl/build/makefile
 	FCFLAG="-Wall -frecord-marker=4 -std=legacy" \
 	UTIL_FILE=util_gfortran.f
 
+After changing the makefiles, re-run `python setup.py install` to compile LBLRTM and finish installing TelFit.
+
+Remember: you **must** comment out the line in `setup.py` that unpacks the original tar files, or these changes will be overwritten!
 
 Running TelFit
 --------------
